@@ -5,19 +5,24 @@ const app = express()
 app.use(express.json())
 
 // Morgan
-morgan(function (tokens, req, res) {
-  return [
-    tokens.method(req, res),
-    tokens.url(req, res),
-    tokens.status(req, res),
-    tokens.res(req, res, 'content-length'),
-    '-',
-    tokens['response-time'](req, res),
-    'ms',
-  ].join(' ')
+morgan.token('type', function (req, res) {
+  return req.headers['content-type']
 })
 
-app.use(morgan('dev'))
+morgan.token('post', request => {
+  if (request.method === 'POST'){
+    return JSON.stringify(request.body)
+  } else {
+    return ''
+  }
+})
+
+morgan.format(
+  'postFormat',
+  ':method :url :status :res[content-length] - :response-time ms :type :post'
+)
+
+app.use(morgan('postFormat'))
 
 let phonebook = [
   {
@@ -84,7 +89,7 @@ const generateId = () => {
 }
 app.post('/api/persons', (request, response) => {
   const body = request.body
-  console.log('body:', body)
+  // console.log('body:', body)
 
   if (!body.name || !body.number) {
     return response.status(400).json({
@@ -104,7 +109,7 @@ app.post('/api/persons', (request, response) => {
   }
 
   phonebook = phonebook.concat(phone)
-  console.log('phonebook:', phonebook)
+  // console.log('phonebook:', phonebook)
 
   response.json(phone)
 })
