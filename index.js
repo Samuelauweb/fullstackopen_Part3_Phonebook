@@ -1,8 +1,23 @@
-const { response } = require('express')
+const morgan = require('morgan')
 const express = require('express')
 const app = express()
 
 app.use(express.json())
+
+// Morgan
+morgan(function (tokens, req, res) {
+  return [
+    tokens.method(req, res),
+    tokens.url(req, res),
+    tokens.status(req, res),
+    tokens.res(req, res, 'content-length'),
+    '-',
+    tokens['response-time'](req, res),
+    'ms',
+  ].join(' ')
+})
+
+app.use(morgan('dev'))
 
 let phonebook = [
   {
@@ -62,28 +77,30 @@ app.get('/api/persons/:id', (request, response) => {
 // POST or create a phone
 const generateId = () => {
   const maxId =
-    phonebook.length > 0 ? Math.floor(Math.random(...phonebook.map((p) => p.id))*1000) : 0
+    phonebook.length > 0
+      ? Math.floor(Math.random(...phonebook.map((p) => p.id)) * 1000)
+      : 0
   return maxId + 1
 }
 app.post('/api/persons', (request, response) => {
   const body = request.body
-  console.log("body:", body)
+  console.log('body:', body)
 
-  if(!body.name || !body.number) {
+  if (!body.name || !body.number) {
     return response.status(400).json({
-      error: 'name or number missing'
+      error: 'name or number missing',
     })
   }
-  if(phonebook.find(p => p.name === body.name)){
+  if (phonebook.find((p) => p.name === body.name)) {
     return response.status(400).json({
-      error: 'name must be unique'
+      error: 'name must be unique',
     })
   }
 
   const phone = {
     id: generateId(),
     name: body.name,
-    number: body.number
+    number: body.number,
   }
 
   phonebook = phonebook.concat(phone)
@@ -104,3 +121,4 @@ const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on PORT ${PORT}`)
 })
+
