@@ -38,6 +38,22 @@ app.get('/info', (request, response) => {
   <p>${new Date()}</p>`)
 })
 
+app.get('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id)
+  const phone = phonebook.find(p => {
+    // console.log(p.id, typeof p.id, id, typeof id, p.id === id);
+    return p.id === id
+  })
+
+  if (phone) {
+    // console.log("phone:",phone);
+    response.json(phone)
+  } else {
+    response.status(404).send('The phone you are looking for does not exist!')
+  }
+  
+})
+
 const PORT = 3001
 app.listen(PORT,() => {
   console.log(`Server running on PORT ${PORT}`);
