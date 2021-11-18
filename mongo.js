@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const password = process.argv[2]
 
-const url = `mongodb+srv://Samuel123:${password}@cluster0.cduy2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
+const url = `mongodb+srv://Samuel123:${password}@cluster0.cduy2.mongodb.net/phonebook-app?retryWrites=true&w=majority`
 
 mongoose.connect(url)
 
