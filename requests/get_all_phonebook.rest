@@ -1,2 +1,2 @@
-# GET http://localhost:3001/api/persons/
-GET https://thawing-temple-61692.herokuapp.com/api/persons
+GET http://localhost:3001/api/persons/
+# GET https://thawing-temple-61692.herokuapp.com/api/persons
