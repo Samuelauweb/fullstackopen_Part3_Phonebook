@@ -39,9 +39,11 @@ app.get('/api/persons', (request, response) => {
 
 // GET a specific page
 app.get('/info', (request, response) => {
-  response.send(`
-  <p>Phonebook has info for ${phonebook.length} people</p>
-  <p>${new Date()}</p>`)
+  Phone.find({}).then(phone => {
+    response.send(`
+    <p>Phonebook has info for ${Phone.length} people</p>
+    <p>${new Date()}</p>`)
+  })
 })
 
 // GET a phone
