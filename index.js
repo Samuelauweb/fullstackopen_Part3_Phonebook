@@ -102,6 +102,22 @@ app.post('/api/persons', (request, response) => {
   })
 })
 
+// (PUT) Update a phone
+app.put('/api/persons/:id', (request,response, next) => {
+  const body = request.body
+
+  const phone = {
+    name: body.name,
+    number: body.number
+  }
+
+  Phone.findByIdAndUpdate(request.params.id, phone, {new:true})
+  .then(updatedPhone => {
+    response.json(updatedPhone)
+  })
+  .catch(error => next(error))
+})
+
 // DELETE a phone
 app.delete('/api/persons/:id', (request, response) => {
   // const id = Number(request.params.id)
