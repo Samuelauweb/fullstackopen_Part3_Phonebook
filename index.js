@@ -80,7 +80,7 @@ app.post('/api/persons', (request, response, next) => {
   //     error: 'name or number missing',
   //   })
   // }
-  if (body.name === '' || body.number === '') {
+  if (body.name === undefined || body.number === undefined) {
     return response.status(400).json({
       error: 'name or number missing',
     })
@@ -140,10 +140,12 @@ app.use(unknownEndpoint)
 // Express error handler
 // this has to be the last loaded middleware.
 const errorHandler = (error, request, response, next) => {
-  console.log('error message:', error.message)
+  console.error('Error message:', error.message)
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({error: error.message})
   }
   next(error)
 }

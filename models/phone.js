@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
 const url = process.env.MONGODB_URI
 
@@ -14,8 +15,18 @@ mongoose.connect(url)
 
   // Define Schema
 const phoneSchema = new mongoose.Schema({
-  name: String,
-  number: {},
+  name: {
+    type: String,
+    minLength: 3,
+    required: true,
+    unique: true,
+  },
+  number: {
+    type: String,
+    minlength: [8, 'Name must have at least 8 characters'],
+    required: true,
+    unique: true,
+  },
 })
 
 // Modify the toJSON of the schema
@@ -26,6 +37,8 @@ phoneSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
+
+phoneSchema.plugin(uniqueValidator)
 
 // Model defining become module exporting
 module.exports = mongoose.model('Phone', phoneSchema)
