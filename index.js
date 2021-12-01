@@ -45,7 +45,7 @@ app.get('/info', (request, response) => {
 })
 
 // GET a phone
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
   // const id = Number(request.params.id)
   // const phone = phonebook.find((p) => {
   //   // console.log(p.id, typeof p.id, id, typeof id, p.id === id);
@@ -57,13 +57,14 @@ app.get('/api/persons/:id', (request, response) => {
         response.json(phone)
       } else {
         response
-          .status(404).end()
-          // .send('The phone you are looking for does not exist!')
+          .status(404)
+          .send('The phone you are looking for does not exist!')
       }
     })
     .catch((error) => {
-      console.log(error)
-      response.status(400).send({error: 'malformatted id'})
+      // console.log(error)
+      // response.status(400).send({error: 'malformatted id'})
+      next(error)
     })
 })
 
@@ -115,6 +116,18 @@ const unknownEndpoint = (request, response) => {
 }
 
 app.use(unknownEndpoint)
+
+// Express error handler
+const errorHandler = (error, request, response, next) => {
+  console.log('error message:', error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({error: 'malformatted id'})
+  }
+  next(error)
+}
+// this has to be the last loaded middleware.
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
