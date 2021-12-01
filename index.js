@@ -1,7 +1,10 @@
+require('dotenv').config()
 const cors = require('cors')
 const morgan = require('morgan')
 const express = require('express')
 const app = express()
+const mongoose = require('mongoose')
+const Phone = require('./models/phone')
 
 app.use(express.json())
 app.use(cors())
@@ -49,14 +52,12 @@ let phonebook = [
     number: '39-23-6423122',
   },
 ]
-// Home page
-app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
-})
 
 // GET all phones
 app.get('/api/persons', (request, response) => {
-  response.json(phonebook)
+  Phone.find({}).then(phone => {
+    response.json(phone)
+  })
 })
 
 // GET a specific page
