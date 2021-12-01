@@ -75,32 +75,28 @@ app.post('/api/persons', (request, response, next) => {
   const body = request.body
   console.log('body:', body)
 
-  // if (!body.name || !body.number) {
-  //   return response.status(400).json({
-  //     error: 'name or number missing',
-  //   })
-  // }
-  if (body.name === undefined || body.number === undefined) {
-    return response.status(400).json({
-      error: 'name or number missing',
-    })
-  }
-  // if (phonebook.find((p) => p.name === body.name)) {
-  //   return response.status(400).json({
-  //     error: 'name must be unique',
-  //   })
-  // }
+    if (body.name === undefined) {
+      return response.status(400).json({
+        error: 'name missing',
+      })
+    }
+
+    if (body.number === undefined) {
+      return response.status(400).json({
+        error: 'number missing',
+      })
+    }
 
   const phone = new Phone({
     name: body.name,
     number: body.number,
   })
 
-  // phonebook = phonebook.concat(phone)
-  // console.log('phonebook:', phonebook)
-
-  phone.save().then((savedPhone) => {
-    response.json(savedPhone)
+  phone
+    .save()
+    .then((savedPhone) => savedPhone.toJSON())
+    .then(savedAndFormattedPhone => {
+    response.json(savedAndFormattedPhone)
   })
   .catch(error => next(error))
 })
@@ -114,7 +110,8 @@ app.put('/api/persons/:id', (request,response, next) => {
     number: body.number
   }
 
-  Phone.findByIdAndUpdate(request.params.id, phone, {new:true})
+  const opts = { runValidators: true }
+  Phone.findByIdAndUpdate(request.params.id, phone, {new:true, opts})
   .then(updatedPhone => {
     response.json(updatedPhone)
   })

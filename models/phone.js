@@ -17,13 +17,13 @@ mongoose.connect(url)
 const phoneSchema = new mongoose.Schema({
   name: {
     type: String,
-    minLength: 3,
+    minLength: [3, 'Name must have at least 3 characters'],
     required: true,
     unique: true,
   },
   number: {
     type: String,
-    minlength: [8, 'Name must have at least 8 characters'],
+    minlength: [8, 'Number must have at least 8 characters'],
     required: true,
     unique: true,
   },
