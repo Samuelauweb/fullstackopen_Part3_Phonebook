@@ -71,7 +71,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 })
 
 // (POST) create a phone
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
   console.log('body:', body)
 
@@ -80,7 +80,7 @@ app.post('/api/persons', (request, response) => {
   //     error: 'name or number missing',
   //   })
   // }
-  if (body.name === '') {
+  if (body.name === '' || body.number === '') {
     return response.status(400).json({
       error: 'name or number missing',
     })
@@ -102,6 +102,7 @@ app.post('/api/persons', (request, response) => {
   phone.save().then((savedPhone) => {
     response.json(savedPhone)
   })
+  .catch(error => next(error))
 })
 
 // (PUT) Update a phone
