@@ -23,7 +23,7 @@ const phoneSchema = new mongoose.Schema({
   },
   number: {
     type: String,
-    minlength: [8, 'Number must have at least 8 characters'],
+    minLength: [8, 'Number must have at least 8 characters'],
     required: true,
     unique: true,
   },
