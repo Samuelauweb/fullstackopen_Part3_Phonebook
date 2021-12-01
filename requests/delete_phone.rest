@@ -1,2 +1,2 @@
-DELETE http://localhost:3001/api/persons/61a74d9ef6764b0fd9fa71b7
+DELETE http://localhost:3001/api/persons/61a768b33b42bdef2009c980
 # DELETE https://thawing-temple-61692.herokuapp.com/api/persons/1

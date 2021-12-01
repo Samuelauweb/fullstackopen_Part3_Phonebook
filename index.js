@@ -6,9 +6,9 @@ const app = express()
 const mongoose = require('mongoose')
 const Phone = require('./models/phone')
 
+app.use(express.static('build'))
 app.use(express.json())
 app.use(cors())
-app.use(express.static('build'))
 
 // Morgan
 morgan.token('type', function (req, res) {
@@ -104,10 +104,11 @@ app.post('/api/persons', (request, response) => {
 
 // DELETE a phone
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  phonebook = phonebook.filter((p) => p.id !== id)
-
-  response.status(204).end()
+  // const id = Number(request.params.id)
+  // phonebook = phonebook.filter((p) => p.id !== id)
+  Phone.findByIdAndRemove(request.params.id)
+    .then((result) => response.status(204).end())
+    .catch((error) => next(error))
 })
 
 // Middleware for catching requests made to non-existent routes
@@ -118,15 +119,15 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint)
 
 // Express error handler
+// this has to be the last loaded middleware.
 const errorHandler = (error, request, response, next) => {
   console.log('error message:', error.message)
 
   if (error.name === 'CastError') {
-    return response.status(400).send({error: 'malformatted id'})
+    return response.status(400).send({ error: 'malformatted id' })
   }
   next(error)
 }
-// this has to be the last loaded middleware.
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
