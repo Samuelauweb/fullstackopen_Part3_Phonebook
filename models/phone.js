@@ -5,15 +5,16 @@ const url = process.env.MONGODB_URI
 
 console.log('connecting to: ', url)
 
-mongoose.connect(url)
-  .then(result => {
+mongoose
+  .connect(url)
+  .then(() => {
     console.log('connected to MongoDB')
   })
-  .catch(error => {
+  .catch((error) => {
     console.log('error connecting to MongoDB:', error.message)
   })
 
-  // Define Schema
+// Define Schema
 const phoneSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -35,7 +36,7 @@ phoneSchema.set('toJSON', {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
     delete returnedObject.__v
-  }
+  },
 })
 
 phoneSchema.plugin(uniqueValidator)

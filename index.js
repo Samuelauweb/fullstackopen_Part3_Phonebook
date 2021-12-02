@@ -3,7 +3,7 @@ const cors = require('cors')
 const morgan = require('morgan')
 const express = require('express')
 const app = express()
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose')
 const Phone = require('./models/phone')
 
 app.use(express.static('build'))
@@ -11,7 +11,7 @@ app.use(express.json())
 app.use(cors())
 
 // Morgan
-morgan.token('type', function (req, res) {
+morgan.token('type', function (req) {
   return req.headers['content-type']
 })
 
@@ -39,7 +39,7 @@ app.get('/api/persons', (request, response) => {
 
 // GET a specific page
 app.get('/info', (request, response) => {
-  Phone.find({}).then(phone => {
+  Phone.find({}).then(() => {
     response.send(`
     <p>Phonebook has info for ${Phone.length} people</p>
     <p>${new Date()}</p>`)
@@ -75,17 +75,17 @@ app.post('/api/persons', (request, response, next) => {
   const body = request.body
   console.log('body:', body)
 
-    if (body.name === undefined) {
-      return response.status(400).json({
-        error: 'name missing',
-      })
-    }
+  if (body.name === undefined) {
+    return response.status(400).json({
+      error: 'name missing',
+    })
+  }
 
-    if (body.number === undefined) {
-      return response.status(400).json({
-        error: 'number missing',
-      })
-    }
+  if (body.number === undefined) {
+    return response.status(400).json({
+      error: 'number missing',
+    })
+  }
 
   const phone = new Phone({
     name: body.name,
@@ -95,35 +95,35 @@ app.post('/api/persons', (request, response, next) => {
   phone
     .save()
     .then((savedPhone) => savedPhone.toJSON())
-    .then(savedAndFormattedPhone => {
-    response.json(savedAndFormattedPhone)
-  })
-  .catch(error => next(error))
+    .then((savedAndFormattedPhone) => {
+      response.json(savedAndFormattedPhone)
+    })
+    .catch((error) => next(error))
 })
 
 // (PUT) Update a phone
-app.put('/api/persons/:id', (request,response, next) => {
+app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body
 
   const phone = {
     name: body.name,
-    number: body.number
+    number: body.number,
   }
 
   const opts = { runValidators: true }
-  Phone.findByIdAndUpdate(request.params.id, phone, {new:true, opts})
-  .then(updatedPhone => {
-    response.json(updatedPhone)
-  })
-  .catch(error => next(error))
+  Phone.findByIdAndUpdate(request.params.id, phone, { new: true, opts })
+    .then((updatedPhone) => {
+      response.json(updatedPhone)
+    })
+    .catch((error) => next(error))
 })
 
 // DELETE a phone
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   // const id = Number(request.params.id)
   // phonebook = phonebook.filter((p) => p.id !== id)
   Phone.findByIdAndRemove(request.params.id)
-    .then((result) => response.status(204).end())
+    .then(() => response.status(204).end())
     .catch((error) => next(error))
 })
 
@@ -142,7 +142,7 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
-    return response.status(400).json({error: error.message})
+    return response.status(400).json({ error: error.message })
   }
   next(error)
 }
